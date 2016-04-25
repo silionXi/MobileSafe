@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/TitleStyle"
+        android:text="3.设置安全号码" />
+
+    <TextView
+        style="@style/ContentStyle"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:text="SIM卡变更后，报警短信会发送到安全号码" />
+
+    <EditText
+        android:id="@+id/etSecContacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="请输入或者选择安全号码"
+        android:textColor="@color/ta"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvSelectContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/lostfind_btn_light_green_selector"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="请选择联系人"
+        android:textSize="22sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/lostfind_contact" />
+    </RelativeLayout>
+</LinearLayout>

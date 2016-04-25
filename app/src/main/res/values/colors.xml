@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="a">#8866ff00</color>
+    <color name="b">#aa000000</color>
+    <color name="c">#C08672</color>
+    <color name="d">#aaa</color>
+
+    <color name="ta">#000000</color>
+    <color name="tb">#ffffff</color>
+    <color name="tc">#aa000000</color>
+</resources>
