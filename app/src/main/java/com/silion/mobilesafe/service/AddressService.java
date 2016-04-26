@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
@@ -12,6 +13,7 @@ import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.silion.mobilesafe.R;
@@ -20,6 +22,11 @@ import com.silion.mobilesafe.database.AddressDao;
 public class AddressService extends Service {
     private TelephonyManager mTelManager;
     private OutCallReceiver mReceiver;
+    private SharedPreferences mPref;
+
+    private int[] mAddressStyle = new int[]{R.drawable.setting_call_locate_white,
+            R.drawable.setting_call_locate_orange, R.drawable.setting_call_locate_blue,
+            R.drawable.setting_call_locate_gray, R.drawable.setting_call_locate_green};
 
     private PhoneStateListener mListener = new PhoneStateListener() {
         @Override
@@ -43,6 +50,7 @@ public class AddressService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mPref = getSharedPreferences("setting", MODE_PRIVATE);
         mTelManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         mReceiver = new OutCallReceiver();
     }
@@ -67,6 +75,8 @@ public class AddressService extends Service {
         LayoutInflater inflate = (LayoutInflater)
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflate.inflate(R.layout.view_show_address, null);
+        LinearLayout ll = (LinearLayout) v.findViewById(R.id.llAdress);
+        ll.setBackgroundResource(mAddressStyle[mPref.getInt("address_style", 0)]);
         TextView tv = (TextView) v.findViewById(R.id.tvAddress);
         tv.setText(address);
 

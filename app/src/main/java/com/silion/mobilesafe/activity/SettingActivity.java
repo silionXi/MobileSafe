@@ -1,6 +1,8 @@
 package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,19 +17,22 @@ import com.silion.mobilesafe.view.SettingItemView;
  * Created by silion on 2016/3/29.
  */
 public class SettingActivity extends Activity {
-    private SharedPreferences mSharePre;
+    private SharedPreferences mPref;
     private SettingItemView mUpdateSettingItemView;
     private SettingItemView mAddressSettingItemView;
+    private SettingItemView mAddressStyleSettingItemView;
+
+    private String[] mAddressStyle = new String[]{"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
 
     private View.OnClickListener mUpdateListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateSettingItemView.isCheck()) {
                 mUpdateSettingItemView.setChecked(false);
-                mSharePre.edit().putBoolean("auto_update", false).commit();
+                mPref.edit().putBoolean("auto_update", false).commit();
             } else {
                 mUpdateSettingItemView.setChecked(true);
-                mSharePre.edit().putBoolean("auto_update", true).commit();
+                mPref.edit().putBoolean("auto_update", true).commit();
             }
         }
     };
@@ -48,6 +53,21 @@ public class SettingActivity extends Activity {
             }
         }
     };
+    private View.OnClickListener mAddressStyleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+            builder.setTitle("请选择归属地提示框风格")
+                    .setItems(mAddressStyle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mAddressStyleSettingItemView.setDesc(mAddressStyle[which]);
+                            mPref.edit().putInt("address_style", which).commit();
+                        }
+                    });
+            builder.create().show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +75,11 @@ public class SettingActivity extends Activity {
 
         setContentView(R.layout.activity_setting);
 
-        mSharePre = getSharedPreferences("setting", MODE_PRIVATE);
+        mPref = getSharedPreferences("setting", MODE_PRIVATE);
+
         mUpdateSettingItemView = (SettingItemView) findViewById(R.id.updateSettingItemView);
         mUpdateSettingItemView.setOnClickListener(mUpdateListener);
-        mUpdateSettingItemView.setChecked(mSharePre.getBoolean("auto_update", true));
+        mUpdateSettingItemView.setChecked(mPref.getBoolean("auto_update", true));
 
         mAddressSettingItemView = (SettingItemView) findViewById(R.id.addressSettingItemView);
         mAddressSettingItemView.setOnClickListener(mAddressListener);
@@ -67,5 +88,9 @@ public class SettingActivity extends Activity {
         } else {
             mAddressSettingItemView.setChecked(false);
         }
+
+        mAddressStyleSettingItemView = (SettingItemView) findViewById(R.id.addressStyleSettingItemView);
+        mAddressStyleSettingItemView.setOnClickListener(mAddressStyleListener);
+        mAddressStyleSettingItemView.setDesc(mAddressStyle[mPref.getInt("address_style", 0)]);
     }
 }
