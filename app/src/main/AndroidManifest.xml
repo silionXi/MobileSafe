@@ -32,7 +32,9 @@
         <activity android:name=".activity.LostFindActivity" />
         <activity android:name=".activity.AdvToolsActivity" />
         <activity android:name=".activity.AddressActivity" />
-        <activity android:name=".activity.DragAdressViewActivity" />
+        <activity
+            android:name=".activity.DragAdressViewActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
             android:name=".receiver.BootCompleteReceiver"
