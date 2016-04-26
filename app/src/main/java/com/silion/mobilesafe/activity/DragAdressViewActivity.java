@@ -67,6 +67,10 @@ public class DragAdressViewActivity extends Activity {
         ivLocate = (ImageView) findViewById(R.id.ivLocate);
         int x = mPref.getInt("locate_x", 0);
         int y = mPref.getInt("locate_y", 0);
+        /**
+         * onMeasure(测量view), onLayout(安放位置), onDraw(绘制) 都在onCreate执行完后才调用
+         * ivLocate.layout(x, y, x + ivLocate.getWidth(), y + ivLocate.getHeight() 不能用这个方法，因为还没有测量完成，不能安放
+         */
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ivLocate.getLayoutParams();
         params.leftMargin = x;
         params.topMargin = y;
