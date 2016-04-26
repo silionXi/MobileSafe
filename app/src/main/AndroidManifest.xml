@@ -32,6 +32,7 @@
         <activity android:name=".activity.LostFindActivity" />
         <activity android:name=".activity.AdvToolsActivity" />
         <activity android:name=".activity.AddressActivity" />
+        <activity android:name=".activity.DragAdressViewActivity" />
 
         <receiver
             android:name=".receiver.BootCompleteReceiver"

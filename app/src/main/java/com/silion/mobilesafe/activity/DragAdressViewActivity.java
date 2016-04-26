@@ -1,0 +1,77 @@
+package com.silion.mobilesafe.activity;
+
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.silion.mobilesafe.R;
+
+/**
+ * Created by silion on 2016/4/26.
+ */
+public class DragAdressViewActivity extends Activity {
+    private SharedPreferences mPref;
+    private TextView tvTopNotice;
+    private TextView tvBottomNotice;
+    private ImageView ivLocate;
+    private int mStartX;
+    private int mStartY;
+
+    private View.OnTouchListener mLocateListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mStartX = (int) event.getRawX();
+                    mStartY = (int) event.getRawY();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    int x = (int) event.getRawX();
+                    int y = (int) event.getRawY();
+                    int dx = x - mStartX;
+                    int dy = y - mStartY;
+
+                    int left = v.getLeft();
+                    int top = v.getTop();
+                    int right = v.getRight();
+                    int bottom = v.getBottom();
+                    v.layout(left + dx, top + dy, right + dx, bottom + dy);
+                    mStartX = x;
+                    mStartY = y;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    SharedPreferences.Editor editor = mPref.edit();
+                    editor.putInt("locate_x", (int) v.getX());
+                    editor.putInt("locate_y", (int) v.getY());
+                    editor.commit();
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_drag_address_view);
+        mPref = getSharedPreferences("setting", MODE_PRIVATE);
+        tvTopNotice = (TextView) findViewById(R.id.tvTopNotice);
+        tvBottomNotice = (TextView) findViewById(R.id.tvBottomNotice);
+        ivLocate = (ImageView) findViewById(R.id.ivLocate);
+        int x = mPref.getInt("locate_x", 0);
+        int y = mPref.getInt("locate_y", 0);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ivLocate.getLayoutParams();
+        params.leftMargin = x;
+        params.topMargin = y;
+        ivLocate.setLayoutParams(params);
+
+        ivLocate.setOnTouchListener(mLocateListener);
+    }
+}

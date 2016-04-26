@@ -21,6 +21,7 @@ public class SettingActivity extends Activity {
     private SettingItemView mUpdateSettingItemView;
     private SettingItemView mAddressSettingItemView;
     private SettingItemView mAddressStyleSettingItemView;
+    private SettingItemView mAddressLocateSettingItemView;
 
     private String[] mAddressStyle = new String[]{"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
 
@@ -68,6 +69,13 @@ public class SettingActivity extends Activity {
             builder.create().show();
         }
     };
+    private View.OnClickListener mAddressLocateListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(SettingActivity.this, DragAdressViewActivity.class);
+            startActivity(intent);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,5 +100,9 @@ public class SettingActivity extends Activity {
         mAddressStyleSettingItemView = (SettingItemView) findViewById(R.id.addressStyleSettingItemView);
         mAddressStyleSettingItemView.setOnClickListener(mAddressStyleListener);
         mAddressStyleSettingItemView.setDesc(mAddressStyle[mPref.getInt("address_style", 0)]);
+
+        mAddressLocateSettingItemView = (SettingItemView) findViewById(R.id.addressLocateSettingItemView);
+        mAddressLocateSettingItemView.setDesc("设置归属地提示框的显示位置");
+        mAddressLocateSettingItemView.setOnClickListener(mAddressLocateListener);
     }
 }
