@@ -3,8 +3,10 @@ package com.silion.mobilesafe.activity;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,6 +23,8 @@ public class DragAdressViewActivity extends Activity {
     private ImageView ivLocate;
     private int mStartX;
     private int mStartY;
+    private int mDisplayW;
+    private int mDisplayH;
 
     private View.OnTouchListener mLocateListener = new View.OnTouchListener() {
         @Override
@@ -36,11 +40,26 @@ public class DragAdressViewActivity extends Activity {
                     int dx = x - mStartX;
                     int dy = y - mStartY;
 
-                    int left = v.getLeft();
-                    int top = v.getTop();
-                    int right = v.getRight();
-                    int bottom = v.getBottom();
-                    v.layout(left + dx, top + dy, right + dx, bottom + dy);
+                    int left = v.getLeft() + dx;
+                    int top = v.getTop() + dy;
+                    int right = v.getRight() + dx;
+                    int bottom = v.getBottom() + dy;
+                    if (top > mDisplayH / 2) {
+                        tvTopNotice.setVisibility(View.VISIBLE);
+                        tvBottomNotice.setVisibility(View.INVISIBLE);
+                    } else {
+                        tvTopNotice.setVisibility(View.INVISIBLE);
+                        tvBottomNotice.setVisibility(View.VISIBLE);
+                    }
+                    if (left < 0 || right > mDisplayW) {
+                        left = v.getLeft();
+                        right = v.getRight();
+                    }
+                    if (top < 0 || bottom > mDisplayH - 80) {
+                        top = v.getTop();
+                        bottom = v.getBottom();
+                    }
+                    v.layout(left, top, right, bottom);
                     mStartX = x;
                     mStartY = y;
                     break;
@@ -67,6 +86,10 @@ public class DragAdressViewActivity extends Activity {
         ivLocate = (ImageView) findViewById(R.id.ivLocate);
         int x = mPref.getInt("locate_x", 0);
         int y = mPref.getInt("locate_y", 0);
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        mDisplayW = display.getWidth();
+        mDisplayH = display.getHeight();
         /**
          * onMeasure(测量view), onLayout(安放位置), onDraw(绘制) 都在onCreate执行完后才调用
          * ivLocate.layout(x, y, x + ivLocate.getWidth(), y + ivLocate.getHeight() 不能用这个方法，因为还没有测量完成，不能安放
