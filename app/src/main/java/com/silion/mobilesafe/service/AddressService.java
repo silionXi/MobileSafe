@@ -10,7 +10,10 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -23,6 +26,7 @@ public class AddressService extends Service {
     private TelephonyManager mTelManager;
     private OutCallReceiver mReceiver;
     private SharedPreferences mPref;
+    private WindowManager mWindowManager;
 
     private int[] mAddressStyle = new int[]{R.drawable.setting_call_locate_white,
             R.drawable.setting_call_locate_orange, R.drawable.setting_call_locate_blue,
@@ -36,6 +40,54 @@ public class AddressService extends Service {
                 showAddress(address);
             }
             super.onCallStateChanged(state, incomingNumber);
+        }
+    };
+    private int mStartX;
+    private int mStartY;
+    private View.OnTouchListener mDragListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            WindowManager.LayoutParams params = (WindowManager.LayoutParams) v.getLayoutParams();
+            Display display = mWindowManager.getDefaultDisplay();
+            int winW = display.getWidth();
+            int winH = display.getHeight();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mStartX = (int) event.getRawX();
+                    mStartY = (int) event.getRawY();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    int endX = (int) event.getRawX();
+                    int endY = (int) event.getRawY();
+                    int dx = endX - mStartX;
+                    int dy = endY - mStartY;
+
+                    int x = params.x + dx;
+                    int y = params.y + dy;
+
+                    if (x < 0 || x + v.getWidth() > winW) {
+                        x = params.x;
+                    }
+                    if (y < 0 || y + v.getHeight() > winH - 80) {
+                        y = params.y;
+                    }
+
+                    params.x = x;
+                    params.y = y;
+                    mWindowManager.updateViewLayout(v, params);
+                    mStartX = endX;
+                    mStartY = endY;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    SharedPreferences.Editor editor = mPref.edit();
+                    editor.putInt("locate_x", params.x);
+                    editor.putInt("locate_y", params.y);
+                    editor.commit();
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
     };
 
@@ -84,14 +136,20 @@ public class AddressService extends Service {
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
         params.format = PixelFormat.TRANSLUCENT;
-//        params.windowAnimations = com.android.internal.R.style.Animation_Toast;
+//        mParams.windowAnimations = com.android.internal.R.style.Animation_Toast;
         params.type = WindowManager.LayoutParams.TYPE_TOAST;
         params.setTitle("Toast");
         params.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        windowManager.addView(v, params);
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE; //去掉这个会导致只能touch到TOAST
+//                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        int dX = mPref.getInt("locate_x", 0);
+        int dY = mPref.getInt("locate_y", 0);
+        params.x = dX;
+        params.y = dY;
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mWindowManager.addView(v, params);
+        v.setOnTouchListener(mDragListener);
     }
 
     class OutCallReceiver extends BroadcastReceiver {

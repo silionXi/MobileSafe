@@ -100,5 +100,13 @@ public class DragAdressViewActivity extends Activity {
         ivLocate.setLayoutParams(params);
 
         ivLocate.setOnTouchListener(mLocateListener);
+
+        if (y > mDisplayH / 2) {
+            tvTopNotice.setVisibility(View.VISIBLE);
+            tvBottomNotice.setVisibility(View.INVISIBLE);
+        } else {
+            tvTopNotice.setVisibility(View.INVISIBLE);
+            tvBottomNotice.setVisibility(View.VISIBLE);
+        }
     }
 }
