@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -27,6 +28,7 @@ public class AddressService extends Service {
     private OutCallReceiver mReceiver;
     private SharedPreferences mPref;
     private WindowManager mWindowManager;
+    private View mView;
 
     private int[] mAddressStyle = new int[]{R.drawable.setting_call_locate_white,
             R.drawable.setting_call_locate_orange, R.drawable.setting_call_locate_blue,
@@ -82,7 +84,7 @@ public class AddressService extends Service {
                     SharedPreferences.Editor editor = mPref.edit();
                     editor.putInt("locate_x", params.x);
                     editor.putInt("locate_y", params.y);
-                    editor.commit();
+                    editor.apply();
                     break;
                 default:
                     break;
@@ -90,6 +92,8 @@ public class AddressService extends Service {
             return true;
         }
     };
+
+    private static Handler mHandler = new Handler();
 
     public AddressService() {
     }
@@ -120,16 +124,18 @@ public class AddressService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mTelManager.listen(mListener, PhoneStateListener.LISTEN_NONE);
-        unregisterReceiver(mReceiver);
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+        }
     }
 
     public void showAddress(String address) {
         LayoutInflater inflate = (LayoutInflater)
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflate.inflate(R.layout.view_show_address, null);
-        LinearLayout ll = (LinearLayout) v.findViewById(R.id.llAdress);
+        mView = inflate.inflate(R.layout.view_show_address, null);
+        LinearLayout ll = (LinearLayout) mView.findViewById(R.id.llAdress);
         ll.setBackgroundResource(mAddressStyle[mPref.getInt("address_style", 0)]);
-        TextView tv = (TextView) v.findViewById(R.id.tvAddress);
+        TextView tv = (TextView) mView.findViewById(R.id.tvAddress);
         tv.setText(address);
 
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -148,8 +154,20 @@ public class AddressService extends Service {
         params.x = dX;
         params.y = dY;
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        mWindowManager.addView(v, params);
-        v.setOnTouchListener(mDragListener);
+        mWindowManager.addView(mView, params);
+        mView.setOnTouchListener(mDragListener);
+        int duration = 3000;
+        if (duration > 0) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mView != null) {
+                        mWindowManager.removeView(mView);
+                        mView = null;
+                    }
+                }
+            }, duration);
+        }
     }
 
     class OutCallReceiver extends BroadcastReceiver {
