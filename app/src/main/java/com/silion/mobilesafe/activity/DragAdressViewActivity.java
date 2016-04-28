@@ -3,6 +3,7 @@ package com.silion.mobilesafe.activity;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,7 +73,20 @@ public class DragAdressViewActivity extends Activity {
                 default:
                     break;
             }
-            return true;
+            return false;
+        }
+    };
+
+    long mHit[] = new long[3]; //长度表示要点击的次数
+    private View.OnClickListener mMultipleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int offset = v.getWidth() / 2;
+            System.arraycopy(mHit, 1, mHit, 0, mHit.length - 1);
+            mHit[mHit.length - 1] = SystemClock.uptimeMillis();
+            if (mHit[mHit.length - 1] - mHit[0] < 800) {
+                v.layout(mDisplayW / 2 - offset, v.getTop(), mDisplayW / 2 + offset, v.getBottom());
+            }
         }
     };
 
@@ -100,6 +114,7 @@ public class DragAdressViewActivity extends Activity {
         ivLocate.setLayoutParams(params);
 
         ivLocate.setOnTouchListener(mLocateListener);
+        ivLocate.setOnClickListener(mMultipleListener);
 
         if (y > mDisplayH / 2) {
             tvTopNotice.setVisibility(View.VISIBLE);
