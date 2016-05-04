@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.silion.mobilesafe.R;
@@ -28,6 +29,7 @@ public class CallSafeActivity extends Activity {
     private ListView mListView;
     private ListAdapter mListAdapter;
     private List<BlackInfo> mListDate = new ArrayList<>();
+    private ProgressBar pbLoad;
     private CallSafeDao mCallSafeDao;
 
     private Handler mHandler = new Handler() {
@@ -36,6 +38,7 @@ public class CallSafeActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case DATA_CHANGE:
+                    pbLoad.setVisibility(View.GONE);
                     mListAdapter.setList(mListDate);
                     mListAdapter.notifyDataSetChanged();
                     break;
@@ -52,6 +55,8 @@ public class CallSafeActivity extends Activity {
         mListView = (ListView) findViewById(R.id.listView);
         mListAdapter = new BlackAdapter(this, mListDate);
         mListView.setAdapter(mListAdapter);
+        pbLoad = (ProgressBar) findViewById(R.id.pbLoad);
+        pbLoad.setVisibility(View.VISIBLE);
         initData();
     }
 
