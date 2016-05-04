@@ -74,4 +74,31 @@ public class CallSafeDao {
         db.close();
         return blackInfos;
     }
+
+    public List<BlackInfo> queryMulti(int limit, int offset) {
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        List<BlackInfo> blackInfos = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT number, mode FROM black LIMIT ? OFFSET ?", new String[]{String.valueOf(limit), String.valueOf(offset * limit)});
+        while (cursor.moveToNext()) {
+            BlackInfo blackInfo = new BlackInfo();
+            blackInfo.setNumber(cursor.getString(0));
+            blackInfo.setMode(cursor.getInt(1));
+            blackInfos.add(blackInfo);
+        }
+        cursor.close();
+        db.close();
+        return blackInfos;
+    }
+
+    public int totalNum() {
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM black", null);
+        int num = 0;
+        if (cursor.moveToNext()) {
+            num = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return num;
+    }
 }

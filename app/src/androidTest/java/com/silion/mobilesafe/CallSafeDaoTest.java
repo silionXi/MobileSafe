@@ -27,7 +27,7 @@ public class CallSafeDaoTest extends AndroidTestCase {
     public void testInsert() throws Exception {
         Random random = new Random();
         for (int i = 0; i < 200; i++) {
-            mDao.insert(i + 13800000001l + "", random.nextInt(2) + 1);
+            mDao.insert(i + 13800000001l + "", random.nextInt(3) + 1);
         }
     }
 

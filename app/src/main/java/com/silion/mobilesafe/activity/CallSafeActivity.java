@@ -8,10 +8,12 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.adapter.ListAdapter;
@@ -31,6 +33,11 @@ public class CallSafeActivity extends Activity {
     private List<BlackInfo> mListDate = new ArrayList<>();
     private ProgressBar pbLoad;
     private CallSafeDao mCallSafeDao;
+    private final int LIMIT = 20;
+    private int mCurrentPage;
+    private int mTotalPage;
+    private TextView tvPage;
+    private EditText etPage;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -41,6 +48,8 @@ public class CallSafeActivity extends Activity {
                     pbLoad.setVisibility(View.GONE);
                     mListAdapter.setList(mListDate);
                     mListAdapter.notifyDataSetChanged();
+                    tvPage.setText(mCurrentPage + "/" + mTotalPage);
+                    mListView.setSelection(0);
                     break;
                 default:
                     break;
@@ -56,22 +65,62 @@ public class CallSafeActivity extends Activity {
         mListAdapter = new BlackAdapter(this, mListDate);
         mListView.setAdapter(mListAdapter);
         pbLoad = (ProgressBar) findViewById(R.id.pbLoad);
-        pbLoad.setVisibility(View.VISIBLE);
+        tvPage = (TextView) findViewById(R.id.tvPage);
+        etPage = (EditText) findViewById(R.id.etPage);
         initData();
     }
 
     public void initData() {
         mCallSafeDao = new CallSafeDao(this);
+        mCurrentPage = 1;
+        mTotalPage = (mCallSafeDao.totalNum() - 1) / LIMIT + 1;
+        getData();
+    }
+
+    public void getData() {
+        pbLoad.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mListDate = mCallSafeDao.queryAll();
-                SystemClock.sleep(2000); //模拟网络延迟
+                mListDate = mCallSafeDao.queryMulti(LIMIT, mCurrentPage - 1);
+                SystemClock.sleep(500); //模拟网络延迟
                 Message msg = new Message();
                 msg.what = DATA_CHANGE;
                 mHandler.sendMessage(msg);
             }
         }).start();
+    }
+
+    public void btJump(View view) {
+        String text = etPage.getText().toString().trim();
+        etPage.setText("");
+        if (text != null && !text.isEmpty()) {
+            int page = Integer.parseInt(text);
+            if (page <= 0 || page > mTotalPage) {
+                Toast.makeText(this, "不能乱跳的哟！！！", Toast.LENGTH_SHORT).show();
+            } else {
+                mCurrentPage = page;
+                getData();
+            }
+        }
+    }
+
+    public void btNext(View view) {
+        if (mCurrentPage >= mTotalPage) {
+            Toast.makeText(this, "已经是最后一页啦！！！", Toast.LENGTH_SHORT).show();
+        } else {
+            mCurrentPage++;
+            getData();
+        }
+    }
+
+    public void btPrev(View view) {
+        if (mCurrentPage <= 1) {
+            Toast.makeText(this, "这就是第一页啊！！！", Toast.LENGTH_SHORT).show();
+        } else {
+            mCurrentPage--;
+            getData();
+        }
     }
 
     public class BlackAdapter extends ListAdapter<BlackInfo> {
