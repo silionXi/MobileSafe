@@ -1,10 +1,11 @@
 package com.silion.mobilesafe;
 
-import android.database.Cursor;
 import android.test.AndroidTestCase;
 
+import com.silion.mobilesafe.bean.BlackInfo;
 import com.silion.mobilesafe.database.CallSafeDao;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -38,13 +39,15 @@ public class CallSafeDaoTest extends AndroidTestCase {
         mDao.update("13800000000", 3);
     }
 
-    public void testQuery() throws Exception {
-        Cursor cursor = mDao.query("13800000000");
-        while (cursor.moveToNext()) {
-            String number = cursor.getString(0);
-            int mode = cursor.getInt(1);
-            android.util.Log.v("slong.liang", number + " : " + mode);
+    public void testQuerySingle() throws Exception {
+        BlackInfo info = mDao.querySingle("13800000001");
+        android.util.Log.v("slong.liang", info.getNumber() + " : " + info.getMode());
+    }
+
+    public void testQueryAll() throws Exception {
+        List<BlackInfo> blackInfos = mDao.queryAll();
+        for (BlackInfo info : blackInfos) {
+            android.util.Log.v("slong.liang", info.getNumber() + " : " + info.getMode());
         }
-        cursor.close();
     }
 }
