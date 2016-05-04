@@ -37,6 +37,11 @@ public class HomeActivity extends Activity {
                     showPasswordDialog();
                     break;
                 }
+                case 1: {
+                    Intent intent = new Intent(HomeActivity.this, CallSafeActivity.class);
+                    startActivity(intent);
+                    break;
+                }
                 case 7: {
                     Intent intent = new Intent(HomeActivity.this, AdvToolsActivity.class);
                     startActivity(intent);
