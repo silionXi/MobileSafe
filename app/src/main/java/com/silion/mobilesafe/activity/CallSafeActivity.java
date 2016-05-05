@@ -8,6 +8,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,10 +35,8 @@ public class CallSafeActivity extends Activity {
     private ProgressBar pbLoad;
     private CallSafeDao mCallSafeDao;
     private final int LIMIT = 20;
-    private int mCurrentPage;
-    private int mTotalPage;
-    private TextView tvPage;
-    private EditText etPage;
+    private int mOffset;
+    private int mTotalNum;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -48,12 +47,41 @@ public class CallSafeActivity extends Activity {
                     pbLoad.setVisibility(View.GONE);
                     mListAdapter.setList(mListDate);
                     mListAdapter.notifyDataSetChanged();
-                    tvPage.setText(mCurrentPage + "/" + mTotalPage);
-                    mListView.setSelection(0);
+                    mListView.setSelection(mOffset);
                     break;
                 default:
                     break;
             }
+        }
+    };
+    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
+        /**
+         *
+         * @param view
+         * @param scrollState  表示滚动的状态
+         *
+         *                     AbsListView.OnScrollListener.SCROLL_STATE_IDLE 闲置状态
+         *                     AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL 手指触摸的时候的状态
+         *                     AbsListView.OnScrollListener.SCROLL_STATE_FLING 惯性
+         */
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (scrollState == SCROLL_STATE_IDLE) {
+                int position = mListView.getLastVisiblePosition() + 1;
+                int count = mListView.getCount();
+                if (position == count) {
+                    if (position >= mTotalNum) {
+                        Toast.makeText(CallSafeActivity.this, "到底了啊~", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mOffset += LIMIT;
+                        getData();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         }
     };
 
@@ -65,15 +93,13 @@ public class CallSafeActivity extends Activity {
         mListAdapter = new BlackAdapter(this, mListDate);
         mListView.setAdapter(mListAdapter);
         pbLoad = (ProgressBar) findViewById(R.id.pbLoad);
-        tvPage = (TextView) findViewById(R.id.tvPage);
-        etPage = (EditText) findViewById(R.id.etPage);
+        mListView.setOnScrollListener(mScrollListener);
         initData();
     }
 
     public void initData() {
         mCallSafeDao = new CallSafeDao(this);
-        mCurrentPage = 1;
-        mTotalPage = (mCallSafeDao.totalNum() - 1) / LIMIT + 1;
+        mOffset = 0;
         getData();
     }
 
@@ -82,45 +108,18 @@ public class CallSafeActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mListDate = mCallSafeDao.queryMulti(LIMIT, mCurrentPage - 1);
+                mTotalNum = mCallSafeDao.totalNum();
+                if (mListDate == null) {
+                    mListDate = mCallSafeDao.queryMulti(LIMIT, mOffset);
+                } else {
+                    mListDate.addAll(mCallSafeDao.queryMulti(LIMIT, mOffset));
+                }
                 SystemClock.sleep(500); //模拟网络延迟
                 Message msg = new Message();
                 msg.what = DATA_CHANGE;
                 mHandler.sendMessage(msg);
             }
         }).start();
-    }
-
-    public void btJump(View view) {
-        String text = etPage.getText().toString().trim();
-        etPage.setText("");
-        if (text != null && !text.isEmpty()) {
-            int page = Integer.parseInt(text);
-            if (page <= 0 || page > mTotalPage) {
-                Toast.makeText(this, "不能乱跳的哟！！！", Toast.LENGTH_SHORT).show();
-            } else {
-                mCurrentPage = page;
-                getData();
-            }
-        }
-    }
-
-    public void btNext(View view) {
-        if (mCurrentPage >= mTotalPage) {
-            Toast.makeText(this, "已经是最后一页啦！！！", Toast.LENGTH_SHORT).show();
-        } else {
-            mCurrentPage++;
-            getData();
-        }
-    }
-
-    public void btPrev(View view) {
-        if (mCurrentPage <= 1) {
-            Toast.makeText(this, "这就是第一页啊！！！", Toast.LENGTH_SHORT).show();
-        } else {
-            mCurrentPage--;
-            getData();
-        }
     }
 
     public class BlackAdapter extends ListAdapter<BlackInfo> {
