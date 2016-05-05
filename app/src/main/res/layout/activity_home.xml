@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <TextView
         style="@style/TitleStyle"
-        android:text="@string/function_list" />
+        android:text="@string/function_list"/>
 
     <com.silion.mobilesafe.view.MarqueeTextView
         android:id="@+id/tipsTextView"
@@ -17,7 +17,7 @@
         android:ellipsize="marquee"
         android:singleLine="true"
         android:text="手机安全卫士！呵呵呵！哈哈哈！哇哇哇！咔咔咔！"
-        android:textSize="22sp" />
+        android:textSize="22sp"/>
 
     <GridView
         android:id="@+id/gridView"
@@ -25,5 +25,5 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:numColumns="3"
-        android:verticalSpacing="20dp" />
+        android:verticalSpacing="20dp"/>
 </LinearLayout>

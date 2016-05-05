@@ -3,8 +3,8 @@
 
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="2dp" />
-            <solid android:color="@color/d" />
+            <corners android:radius="2dp"/>
+            <solid android:color="@color/d"/>
         </shape>
     </item>
 </selector>

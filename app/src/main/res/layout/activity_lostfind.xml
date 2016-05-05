@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -25,22 +25,22 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:background="@android:drawable/presence_online" />
+            tools:background="@android:drawable/presence_online"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:background="@android:drawable/presence_invisible" />
+            tools:background="@android:drawable/presence_invisible"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:background="@android:drawable/presence_invisible" />
+            tools:background="@android:drawable/presence_invisible"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:background="@android:drawable/presence_invisible" />
+            tools:background="@android:drawable/presence_invisible"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:background="@drawable/lostfind_btn_green_selector"
-            android:text="上一步" />
+            android:text="上一步"/>
 
         <Button
             android:id="@+id/btNext"
@@ -64,6 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@drawable/lostfind_btn_green_selector"
-            android:text="下一步" />
+            android:text="下一步"/>
     </RelativeLayout>
 </LinearLayout>

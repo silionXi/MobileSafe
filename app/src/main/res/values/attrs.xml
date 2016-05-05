@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SettingItemView">
-        <attr name="titleText" format="string" />
-        <attr name="descOnText" format="string" />
-        <attr name="descOffText" format="string" />
+        <attr name="titleText" format="string"/>
+        <attr name="descOnText" format="string"/>
+        <attr name="descOffText" format="string"/>
         <attr name="icon" format="integer">
         </attr>
     </declare-styleable>

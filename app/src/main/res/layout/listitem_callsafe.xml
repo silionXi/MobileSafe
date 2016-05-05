@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="5dp">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp">
 
     <TextView
         android:id="@+id/tvNumber"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/ta"
         android:textSize="20sp"
-        tools:text="13800000000" />
+        tools:text="13800000000"/>
 
     <TextView
         android:id="@+id/tvMode"
@@ -23,7 +23,7 @@
         android:layout_below="@id/tvNumber"
         android:textColor="@color/td"
         android:textSize="18sp"
-        tools:text="拦截电话" />
+        tools:text="拦截电话"/>
 
     <ImageView
         android:id="@+id/ivDelete"
@@ -31,5 +31,5 @@
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/callsafe_black_delete_icon" />
+        android:src="@drawable/callsafe_black_delete_icon"/>
 </RelativeLayout>

@@ -38,7 +38,7 @@ public class SmsReceiver extends BroadcastReceiver {
             } else if ("#*wipedata*#".equals(body)) {
                 DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
                 ComponentName deviceAdmin = new ComponentName(context, BaseDeviceAdminReceiver.class);
-                if (dpm.isAdminActive(deviceAdmin)){
+                if (dpm.isAdminActive(deviceAdmin)) {
                     dpm.wipeData(0);
                 }
 
@@ -46,7 +46,7 @@ public class SmsReceiver extends BroadcastReceiver {
             } else if ("#*lockscreen*#".equals(body)) {
                 DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
                 ComponentName deviceAdmin = new ComponentName(context, BaseDeviceAdminReceiver.class);
-                if (dpm.isAdminActive(deviceAdmin)){
+                if (dpm.isAdminActive(deviceAdmin)) {
                     dpm.resetPassword("123456", 0);
                     dpm.lockNow();
                 }

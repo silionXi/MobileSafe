@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#5000"
-    android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#5000"
+                android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvTopNotice"
@@ -14,13 +14,13 @@
         android:text="按住提示框拖动到任意问题\n按手机返回键立即生效"
         android:textColor="@color/tb"
         android:textSize="20sp"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/ivLocate"
         android:layout_width="160dp"
         android:layout_height="50dp"
-        android:src="@drawable/setting_locate" />
+        android:src="@drawable/setting_locate"/>
 
     <TextView
         android:id="@+id/tvBottomNotice"
@@ -31,5 +31,5 @@
         android:gravity="center"
         android:text="按住提示框拖动到任意问题\n按手机返回键立即生效"
         android:textColor="@color/tb"
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 </RelativeLayout>

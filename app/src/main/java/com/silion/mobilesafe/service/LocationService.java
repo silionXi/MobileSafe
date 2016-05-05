@@ -27,7 +27,7 @@ public class LocationService extends Service {
             double latitude = location.getLatitude(); //纬度
             double altitude = location.getAltitude(); //高度
             float accuracy = location.getAccuracy(); //精度
-            String result = "经度-" + longitude + ", 纬度-" + latitude  + ", 高度-" + altitude  + ", 精度-" + accuracy;
+            String result = "经度-" + longitude + ", 纬度-" + latitude + ", 高度-" + altitude + ", 精度-" + accuracy;
             mPref.edit().putString("last_location", result).commit();
 
             String phone = mPref.getString("security_contact", "18928818247");

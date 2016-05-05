@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Message;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 
@@ -17,7 +16,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         SharedPreferences pref = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         boolean protect = pref.getBoolean("lostfind_open", false);
         //开启防盗保护才检测sim卡是否改变
-        if (protect){
+        if (protect) {
             String saveSim = pref.getString("sim_serial", null);
             if (saveSim != null && !saveSim.isEmpty()) {
                 TelephonyManager telManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);

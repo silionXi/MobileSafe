@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rlRoot"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/launcher_bg"
-    tools:context="com.silion.mobilesafe.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/rlRoot"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/launcher_bg"
+                tools:context="com.silion.mobilesafe.MainActivity">
 
     <TextView
         android:id="@+id/versionTextView"
@@ -17,14 +17,14 @@
         android:shadowRadius="1"
         android:textColor="@color/ta"
         android:textSize="20sp"
-        tools:text="@string/version" />
+        tools:text="@string/version"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/versionTextView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/progressTextView"
@@ -33,5 +33,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:visibility="gone"
-        tools:text="@string/download_progress" />
+        tools:text="@string/download_progress"/>
 </RelativeLayout>
