@@ -7,6 +7,14 @@ public class BlackInfo {
     private String mNumber;
     private int mMode;
 
+    public BlackInfo() {
+    }
+
+    public BlackInfo(String number, int mode) {
+        mNumber = number;
+        mMode = mode;
+    }
+
     public String getNumber() {
         return mNumber;
     }

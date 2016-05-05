@@ -1,14 +1,20 @@
 package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -122,6 +128,60 @@ public class CallSafeActivity extends Activity {
         }).start();
     }
 
+    public void addBlack(View view) {
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        View dialogView = View.inflate(this, R.layout.dialog_callsafe_addblack, null);
+        dialog.setView(dialogView);
+        final EditText etBlack = (EditText) dialogView.findViewById(R.id.etBlack);
+        final CheckBox cbPhone = (CheckBox) dialogView.findViewById(R.id.cbPhone);
+        final CheckBox cbMsg = (CheckBox) dialogView.findViewById(R.id.cbMsg);
+        Button btOk = (Button) dialogView.findViewById(R.id.btOk);
+        btOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) CallSafeActivity.this.getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                int mode;
+                String phone = etBlack.getText().toString().trim();
+                if (!TextUtils.isEmpty(phone)) {
+                    if (cbPhone.isChecked() && cbMsg.isChecked()) {
+                        mode = 3;
+                    } else if (cbPhone.isChecked()) {
+                        mode = 1;
+                    } else if (cbMsg.isChecked()) {
+                        mode = 2;
+                    } else {
+                        Toast.makeText(CallSafeActivity.this, "请选择要拦截的模式", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    mCallSafeDao.insert(phone, mode);
+                    mListDate.add(0, new BlackInfo(phone, mode));
+                    if (mListAdapter == null) {
+                        mListAdapter = new BlackAdapter(CallSafeActivity.this, mListDate);
+                        mListView.setAdapter(mListAdapter);
+                    } else {
+                        mListAdapter.setList(mListDate);
+                        mListAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    Toast.makeText(CallSafeActivity.this, "请输入号码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.dismiss();
+            }
+        });
+        Button btCancel = (Button) dialogView.findViewById(R.id.btCancel);
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
     public class BlackAdapter extends ListAdapter<BlackInfo> {
         private Context mContext;
 
@@ -144,8 +204,9 @@ public class CallSafeActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            BlackInfo blackInfo = (BlackInfo) getItem(position);
-            viewHolder.tvNumber.setText(blackInfo.getNumber());
+            final BlackInfo blackInfo = (BlackInfo) getItem(position);
+            final String number = blackInfo.getNumber();
+            viewHolder.tvNumber.setText(number);
             if (blackInfo.getMode() == 1) {
                 viewHolder.tvMode.setText("拦截电话");
             } else if (blackInfo.getMode() == 2) {
@@ -153,6 +214,26 @@ public class CallSafeActivity extends Activity {
             } else {
                 viewHolder.tvMode.setText("拦截电话和短信");
             }
+            viewHolder.ivDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builer = new AlertDialog.Builder(CallSafeActivity.this);
+                    builer.setTitle("移除黑名单");
+                    builer.setMessage("是否确认把号码:" + number + "从黑名单移除？");
+                    builer.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int num = mCallSafeDao.delete(number);
+                            if (num > 0) {
+                                mListDate.remove(blackInfo);
+                                mListAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                    builer.setCancelable(false);
+                    builer.create().show();
+                }
+            });
             return convertView;
         }
 
