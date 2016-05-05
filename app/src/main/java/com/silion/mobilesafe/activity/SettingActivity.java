@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.service.AddressService;
+import com.silion.mobilesafe.service.BlackService;
 import com.silion.mobilesafe.utils.ServiceStatusUtils;
 import com.silion.mobilesafe.view.SettingItemView;
 
@@ -22,6 +23,7 @@ public class SettingActivity extends Activity {
     private SettingItemView mAddressSettingItemView;
     private SettingItemView mAddressStyleSettingItemView;
     private SettingItemView mAddressLocateSettingItemView;
+    private SettingItemView mBlackSettingItemView;
 
     private String[] mAddressStyle = new String[]{"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
 
@@ -76,6 +78,22 @@ public class SettingActivity extends Activity {
             startActivity(intent);
         }
     };
+    private View.OnClickListener mBlackListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mBlackSettingItemView.isCheck()) {
+                mBlackSettingItemView.setChecked(false);
+                Intent intent = new Intent();
+                intent.setClass(SettingActivity.this, BlackService.class);
+                stopService(intent);
+            } else {
+                mBlackSettingItemView.setChecked(true);
+                Intent intent = new Intent();
+                intent.setClass(SettingActivity.this, BlackService.class);
+                startService(intent);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,5 +122,13 @@ public class SettingActivity extends Activity {
         mAddressLocateSettingItemView = (SettingItemView) findViewById(R.id.addressLocateSettingItemView);
         mAddressLocateSettingItemView.setDesc("设置归属地提示框的显示位置");
         mAddressLocateSettingItemView.setOnClickListener(mAddressLocateListener);
+
+        mBlackSettingItemView = (SettingItemView) findViewById(R.id.blackSettingItemView);
+        mBlackSettingItemView.setOnClickListener(mBlackListener);
+        if (ServiceStatusUtils.isServiceRunning(this, BlackService.class.getName())) {
+            mBlackSettingItemView.setChecked(true);
+        } else {
+            mBlackSettingItemView.setChecked(false);
+        }
     }
 }

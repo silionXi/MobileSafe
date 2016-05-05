@@ -54,6 +54,8 @@ public class CallSafeDao {
         if (cursor.moveToNext()) {
             blackInfo.setNumber(cursor.getString(0));
             blackInfo.setMode(cursor.getInt(1));
+        } else {
+            return null;
         }
         cursor.close();
         db.close();
