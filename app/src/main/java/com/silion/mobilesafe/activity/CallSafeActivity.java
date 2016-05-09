@@ -117,6 +117,7 @@ public class CallSafeActivity extends Activity {
                 mTotalNum = mCallSafeDao.totalNum();
                 if (mListDate == null) {
                     mListDate = mCallSafeDao.queryMulti(LIMIT, mOffset);
+
                 } else {
                     mListDate.addAll(mCallSafeDao.queryMulti(LIMIT, mOffset));
                 }
