@@ -15,7 +15,7 @@ import java.util.List;
  * Created by silion on 2016/5/10.
  */
 public class AppManager {
-    public static List<AppInfo> getAppInfo(Context context) {
+    public static List<AppInfo> getAppList(Context context) {
         List<AppInfo> appInfos = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<PackageInfo> packageInfos = pm.getInstalledPackages(PackageManager.GET_ACTIVITIES);

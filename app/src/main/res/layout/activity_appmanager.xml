@@ -32,6 +32,14 @@
             tools:text="SD卡可用：xxx"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/d"
+        android:textSize="16sp"
+        tools:text="用户程序"/>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
