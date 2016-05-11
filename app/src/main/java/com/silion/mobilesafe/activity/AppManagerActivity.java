@@ -34,6 +34,7 @@ import com.silion.mobilesafe.bean.AppInfo;
 import com.silion.mobilesafe.engine.AppManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -149,6 +150,14 @@ public class AppManagerActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String packageName = intent.getDataString().replaceFirst("package:", "");
+            Iterator<AppInfo> iterator = mListData.iterator();
+            while (iterator.hasNext()) {
+                AppInfo appInfo = iterator.next();
+                if (appInfo != null && appInfo.getPackageName().equals(packageName)) {
+                    iterator.remove();
+                }
+            }
+            mListAdapter.notifyDataSetChanged();
         }
     };
 
