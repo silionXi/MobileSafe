@@ -88,6 +88,7 @@ public class AppManagerActivity extends Activity {
             switch (v.getId()) {
                 case R.id.llUninstall: {
                     Intent intent = new Intent();
+//                    intent.setAction(Intent.ACTION_DELETE);
                     intent.setAction(Intent.ACTION_UNINSTALL_PACKAGE);
                     Uri uri = Uri.parse("package:" + mClickAppInfo.getPackageName());
                     intent.setData(uri);
@@ -95,12 +96,25 @@ public class AppManagerActivity extends Activity {
                     break;
                 }
                 case R.id.llRun: {
+                    Intent intent = getPackageManager().getLaunchIntentForPackage(mClickAppInfo.getPackageName());
+                    startActivity(intent);
                     break;
                 }
                 case R.id.llShare: {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra("android.intent.extra.SUBJECT", "f分享");
+                    intent.putExtra("android.intent.extra.TEXT",
+                            "Hi！推荐您使用软件：" + mClickAppInfo.getName() + "下载地址:" + "https://play.google.com/store/apps/details?id=" + mClickAppInfo.getPackageName());
+                    startActivity(Intent.createChooser(intent, "分享"));
                     break;
                 }
                 case R.id.llDetail: {
+                    Intent intent = new Intent();
+                    intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                    intent.addCategory(Intent.CATEGORY_DEFAULT);
+                    intent.setData(Uri.parse("package:" + mClickAppInfo.getPackageName()));
+                    startActivity(intent);
                     break;
                 }
                 default:
