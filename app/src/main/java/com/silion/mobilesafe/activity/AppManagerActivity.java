@@ -2,18 +2,26 @@ package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.Formatter;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -55,6 +63,7 @@ public class AppManagerActivity extends Activity {
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            popupWindowDismiss();
             if (totalItemCount > 0 && view.getLastVisiblePosition() <= mUserList.size()) {
                 tvHeader.setText("用户程序");
                 tvHeader.setVisibility(View.VISIBLE);
@@ -66,6 +75,74 @@ public class AppManagerActivity extends Activity {
             }
         }
     };
+    private View.OnClickListener mPopListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            popupWindowDismiss();
+
+            switch (v.getId()) {
+                case R.id.llUninstall: {
+                    break;
+                }
+                case R.id.llRun: {
+                    break;
+                }
+                case R.id.llShare: {
+                    break;
+                }
+                case R.id.llDetail: {
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
+    private AdapterView.OnItemClickListener mClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mListAdapter.getItem(position) != null) {
+                View popupView = View.inflate(AppManagerActivity.this, R.layout.view_appmanager_menu, null);
+                LinearLayout llUninstall = (LinearLayout) popupView.findViewById(R.id.llUninstall);
+                llUninstall.setOnClickListener(mPopListener);
+                LinearLayout llRun = (LinearLayout) popupView.findViewById(R.id.llRun);
+                llRun.setOnClickListener(mPopListener);
+                LinearLayout llShare = (LinearLayout) popupView.findViewById(R.id.llShare);
+                llShare.setOnClickListener(mPopListener);
+                LinearLayout llDetail = (LinearLayout) popupView.findViewById(R.id.llDetail);
+                llDetail.setOnClickListener(mPopListener);
+
+                popupWindowDismiss();
+                mPopupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                //需要注意：使用PopupWindow 必须设置背景。不然没有动画
+                mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                int[] location = new int[2];
+                //获取view展示到窗体上面的位置
+                view.getLocationInWindow(location);
+                mPopupWindow.showAtLocation(parent, Gravity.TOP | Gravity.LEFT, 150, location[1]);
+                /**
+                 * 第一第二个参数：x从50%->100%
+                 * 第三第四个参数：y从50%->100%
+                 * 第五个参数：第六个参数按自己比例
+                 * 第六个参数：x开始位置
+                 * 第七个参数：第六个参数按自己比例
+                 * 第八个参数：y开始位置
+                 */
+                ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
+                animation.setDuration(500);
+                popupView.startAnimation(animation);
+            }
+        }
+    };
+
+    public void popupWindowDismiss() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+            mPopupWindow = null;
+        }
+    }
+
+    private PopupWindow mPopupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +158,15 @@ public class AppManagerActivity extends Activity {
         mListAdapter = new ListAdapter(this);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(mScrollListener);
+        mListView.setOnItemClickListener(mClickListener);
         initData();
 
+    }
+
+    @Override
+    protected void onStop() {
+        popupWindowDismiss();
+        super.onStop();
     }
 
     public void initData() {
