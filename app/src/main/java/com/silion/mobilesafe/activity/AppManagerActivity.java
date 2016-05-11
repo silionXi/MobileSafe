@@ -1,9 +1,13 @@
 package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -82,6 +86,11 @@ public class AppManagerActivity extends Activity {
 
             switch (v.getId()) {
                 case R.id.llUninstall: {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_UNINSTALL_PACKAGE);
+                    Uri uri = Uri.parse("package:" + mClickAppInfo.getPackageName());
+                    intent.setData(uri);
+                    startActivity(intent);
                     break;
                 }
                 case R.id.llRun: {
@@ -101,7 +110,8 @@ public class AppManagerActivity extends Activity {
     private AdapterView.OnItemClickListener mClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (mListAdapter.getItem(position) != null) {
+            mClickAppInfo = (AppInfo) mListAdapter.getItem(position);
+            if (mClickAppInfo != null) {
                 View popupView = View.inflate(AppManagerActivity.this, R.layout.view_appmanager_menu, null);
                 LinearLayout llUninstall = (LinearLayout) popupView.findViewById(R.id.llUninstall);
                 llUninstall.setOnClickListener(mPopListener);
@@ -134,6 +144,13 @@ public class AppManagerActivity extends Activity {
             }
         }
     };
+    private AppInfo mClickAppInfo;
+    private BroadcastReceiver mUnInstallReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String packageName = intent.getDataString().replaceFirst("package:", "");
+        }
+    };
 
     public void popupWindowDismiss() {
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
@@ -161,12 +178,22 @@ public class AppManagerActivity extends Activity {
         mListView.setOnItemClickListener(mClickListener);
         initData();
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addDataScheme("package");
+        registerReceiver(mUnInstallReceiver, filter);
     }
 
     @Override
     protected void onStop() {
         popupWindowDismiss();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mUnInstallReceiver);
+        super.onDestroy();
     }
 
     public void initData() {
