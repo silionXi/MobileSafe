@@ -79,4 +79,22 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@drawable/global_dashed_line_shape"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:drawableLeft="@android:drawable/ic_menu_more"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:onClick="quickDial"
+        android:padding="5dp"
+        android:text="一键拨号"
+        android:textColor="@color/ta"
+        android:textSize="20sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/global_dashed_line_shape"/>
 </LinearLayout>

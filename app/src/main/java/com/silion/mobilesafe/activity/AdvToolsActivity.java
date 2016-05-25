@@ -2,8 +2,12 @@ package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 
 import com.silion.mobilesafe.R;
@@ -65,5 +69,42 @@ public class AdvToolsActivity extends Activity {
     }
 
     public void appLock(View view) {
+    }
+
+    public void quickDial(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Activity.RESULT_OK == resultCode) {
+            if (0 == requestCode) {
+                Uri uri = data.getData();
+                long rawContactId = ContentUris.parseId(uri);
+                Cursor cursor = getContentResolver().query(Uri.parse("content://com.android.contacts/data"),
+                        new String[]{"data1", "mimetype"}, "raw_contact_id = ?", new String[]{rawContactId + ""}, null);
+                while (cursor.moveToNext()) {
+                    String data1 = cursor.getString(0);
+                    String type = cursor.getString(1);
+
+                    if ("vnd.android.cursor.item/phone_v2".equals(type)) {
+                        createDialShortcut(data1);
+                    }
+                }
+            }
+        }
+    }
+
+    public void createDialShortcut(String phone) {
+//        Intent shortcutIntent = new Intent(Intent.ACTION_CALL_PRIVILEGED);//直接拨打
+        Intent shortcutIntent = new Intent(Intent.ACTION_DIAL);//拨号盘
+        shortcutIntent.setData(Uri.parse("tel:" + phone));
+        Intent addIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, phone);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, R.drawable.launcher_ic);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra("duplicate", false);
+        sendBroadcast(addIntent);
     }
 }
