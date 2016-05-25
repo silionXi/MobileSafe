@@ -72,8 +72,14 @@ public class SmsUtils {
                     xmlSerializer.endTag(null, "type");
 
                     xmlSerializer.startTag(null, "body");
-                    xmlSerializer.text(body);
+                    String encrypted = Crypto.encrypt("body", body);
+                    xmlSerializer.text(encrypted);
                     xmlSerializer.endTag(null, "body");
+
+                    xmlSerializer.startTag(null, "body2");
+                    String de = Crypto.decrypt("body", encrypted);
+                    xmlSerializer.text(de);
+                    xmlSerializer.endTag(null, "body2");
 
                     xmlSerializer.endTag(null, "sms");
                     SystemClock.sleep(500);
