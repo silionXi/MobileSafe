@@ -45,6 +45,7 @@
             android:name=".activity.CallSafeActivity"
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activity.AppManagerActivity"/>
+        <activity android:name=".activity.TaskManagerActivity"/>
 
         <receiver
             android:name=".receiver.BootCompleteReceiver"

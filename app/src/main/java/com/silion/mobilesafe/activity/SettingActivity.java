@@ -11,7 +11,7 @@ import android.view.View;
 import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.service.AddressService;
 import com.silion.mobilesafe.service.BlackService;
-import com.silion.mobilesafe.utils.ServiceStatusUtils;
+import com.silion.mobilesafe.utils.SystemInfoUtils;
 import com.silion.mobilesafe.view.SettingItemView;
 
 /**
@@ -109,7 +109,7 @@ public class SettingActivity extends Activity {
 
         mAddressSettingItemView = (SettingItemView) findViewById(R.id.addressSettingItemView);
         mAddressSettingItemView.setOnClickListener(mAddressListener);
-        if (ServiceStatusUtils.isServiceRunning(this, AddressService.class.getName())) {
+        if (SystemInfoUtils.isServiceRunning(this, AddressService.class.getName())) {
             mAddressSettingItemView.setChecked(true);
         } else {
             mAddressSettingItemView.setChecked(false);
@@ -125,7 +125,7 @@ public class SettingActivity extends Activity {
 
         mBlackSettingItemView = (SettingItemView) findViewById(R.id.blackSettingItemView);
         mBlackSettingItemView.setOnClickListener(mBlackListener);
-        if (ServiceStatusUtils.isServiceRunning(this, BlackService.class.getName())) {
+        if (SystemInfoUtils.isServiceRunning(this, BlackService.class.getName())) {
             mBlackSettingItemView.setChecked(true);
         } else {
             mBlackSettingItemView.setChecked(false);
