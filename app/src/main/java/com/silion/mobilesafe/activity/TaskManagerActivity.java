@@ -9,7 +9,9 @@ import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -68,6 +70,18 @@ public class TaskManagerActivity extends Activity {
             }
         }
     };
+    private AdapterView.OnItemClickListener mItemListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            TaskInfo info = (TaskInfo) mListAdapter.getItem(position);
+            if (info != null) {
+                boolean isCheck = info.isCheck();
+                info.setIsCheck(!isCheck);
+                ListAdapter.ViewHolder viewHolder = (ListAdapter.ViewHolder) view.getTag();
+                viewHolder.cbClear.setChecked(!isCheck);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +96,7 @@ public class TaskManagerActivity extends Activity {
         mListAdapter = new ListAdapter(this);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(mScrollListener);
+        mListView.setOnItemClickListener(mItemListener);
         initData();
     }
 
@@ -119,6 +134,24 @@ public class TaskManagerActivity extends Activity {
         }).start();
     }
 
+    public void selectAll(View view) {
+        for (TaskInfo info : mListData) {
+            if (info != null) {
+                info.setIsCheck(true);
+            }
+            mListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void invertSelect(View view) {
+        for (TaskInfo info : mListData) {
+            if (info != null) {
+                info.setIsCheck(!info.isCheck());
+            }
+            mListAdapter.notifyDataSetChanged();
+        }
+    }
+
     public class ListAdapter extends BaseAdapter {
         private Context mContext;
 
@@ -129,8 +162,8 @@ public class TaskManagerActivity extends Activity {
         class ViewHolder {
             public ImageView ivIcon;
             public TextView tvName;
-            public TextView tvLocat;
             public TextView tvSize;
+            public CheckBox cbClear;
         }
 
         @Override
@@ -168,11 +201,13 @@ public class TaskManagerActivity extends Activity {
                     viewHolder.ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
                     viewHolder.tvName = (TextView) view.findViewById(R.id.tvName);
                     viewHolder.tvSize = (TextView) view.findViewById(R.id.tvSize);
+                    viewHolder.cbClear = (CheckBox) view.findViewById(R.id.cbClear);
                     view.setTag(viewHolder);
                 }
                 viewHolder.ivIcon.setImageDrawable(taskInfo.getIcon());
                 viewHolder.tvName.setText(taskInfo.getAppName());
                 viewHolder.tvSize.setText(Formatter.formatFileSize(mContext, taskInfo.getSize()));
+                viewHolder.cbClear.setChecked(taskInfo.isCheck());
             }
             return view;
         }

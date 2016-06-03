@@ -13,9 +13,9 @@
         tools:src="@drawable/launcher_ic"/>
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="5dp"
         android:paddingLeft="15dp"
@@ -32,17 +32,19 @@
             tools:text="手机卫士"/>
 
         <TextView
-                android:id="@+id/tvSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/tc"
-                android:textSize="18sp"
-                tools:text="xxx"/>
+            android:id="@+id/tvSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/tc"
+            android:textSize="18sp"
+            tools:text="xxx"/>
     </LinearLayout>
 
     <CheckBox
-        android:layout_gravity="center_vertical"
         android:id="@+id/cbClear"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:clickable="false"
+        android:focusable="false"/>
 </LinearLayout>
