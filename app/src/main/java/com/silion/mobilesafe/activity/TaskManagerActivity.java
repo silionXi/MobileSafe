@@ -38,11 +38,10 @@ public class TaskManagerActivity extends Activity {
     private ListView mListView;
     private ListAdapter mListAdapter;
     private List<TaskInfo> mListData = new ArrayList<>();
-    ;
     private List<TaskInfo> mUserList = new ArrayList<>();
-    ;
     private List<TaskInfo> mSysList = new ArrayList<>();
-    ;
+    private String mPackageName;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -74,7 +73,7 @@ public class TaskManagerActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             TaskInfo info = (TaskInfo) mListAdapter.getItem(position);
-            if (info != null) {
+            if (info != null && !info.getPackageName().equals(mPackageName)) {
                 boolean isCheck = info.isCheck();
                 info.setIsCheck(!isCheck);
                 ListAdapter.ViewHolder viewHolder = (ListAdapter.ViewHolder) view.getTag();
@@ -98,6 +97,7 @@ public class TaskManagerActivity extends Activity {
         mListView.setOnScrollListener(mScrollListener);
         mListView.setOnItemClickListener(mItemListener);
         initData();
+        mPackageName = getPackageName();
     }
 
     public void initFreeSpace() {
@@ -136,7 +136,7 @@ public class TaskManagerActivity extends Activity {
 
     public void selectAll(View view) {
         for (TaskInfo info : mListData) {
-            if (info != null) {
+            if (info != null && !info.getPackageName().equals(mPackageName)) {
                 info.setIsCheck(true);
             }
             mListAdapter.notifyDataSetChanged();
@@ -145,10 +145,16 @@ public class TaskManagerActivity extends Activity {
 
     public void invertSelect(View view) {
         for (TaskInfo info : mListData) {
-            if (info != null) {
+            if (info != null && !info.getPackageName().equals(mPackageName)) {
                 info.setIsCheck(!info.isCheck());
             }
             mListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void clear(View view) {
+        for (TaskInfo info : mListData) {
+
         }
     }
 
@@ -207,7 +213,12 @@ public class TaskManagerActivity extends Activity {
                 viewHolder.ivIcon.setImageDrawable(taskInfo.getIcon());
                 viewHolder.tvName.setText(taskInfo.getAppName());
                 viewHolder.tvSize.setText(Formatter.formatFileSize(mContext, taskInfo.getSize()));
-                viewHolder.cbClear.setChecked(taskInfo.isCheck());
+                if (taskInfo.getPackageName().equals(mPackageName)) {
+                    viewHolder.cbClear.setVisibility(View.INVISIBLE);
+                } else {
+                    viewHolder.cbClear.setVisibility(View.VISIBLE);
+                    viewHolder.cbClear.setChecked(taskInfo.isCheck());
+                }
             }
             return view;
         }
