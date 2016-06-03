@@ -1,6 +1,7 @@
 package com.silion.mobilesafe.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,8 +23,10 @@ import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.bean.TaskInfo;
 import com.silion.mobilesafe.engine.TaskManager;
 import com.silion.mobilesafe.utils.SystemInfoUtils;
+import com.silion.mobilesafe.utils.UIUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -81,6 +84,9 @@ public class TaskManagerActivity extends Activity {
             }
         }
     };
+    private long mTotalMem;
+    private int mCount;
+    private long mAvailMem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +107,12 @@ public class TaskManagerActivity extends Activity {
     }
 
     public void initFreeSpace() {
-        int count = SystemInfoUtils.getRunningAppProcessesCunt(this);
-        tvTask.setText("进程：" + count + "个");
+        mCount = SystemInfoUtils.getRunningAppProcessesCunt(this);
+        tvTask.setText("进程：" + mCount + "个");
 
-        long availMem = SystemInfoUtils.getAvailMem(this);
-        long totalMem = SystemInfoUtils.getTotalMem();
-        tvRam.setText("内存：" + Formatter.formatFileSize(this, availMem) + "/" + Formatter.formatFileSize(this, totalMem));
+        mAvailMem = SystemInfoUtils.getAvailMem(this);
+        mTotalMem = SystemInfoUtils.getTotalMem();
+        tvRam.setText("内存：" + Formatter.formatFileSize(this, mAvailMem) + "/" + Formatter.formatFileSize(this, mTotalMem));
     }
 
     public void initData() {
@@ -153,8 +159,29 @@ public class TaskManagerActivity extends Activity {
     }
 
     public void clear(View view) {
-        for (TaskInfo info : mListData) {
-
+        int clearCount = 0;
+        long clearSize = 0;
+        Iterator infoIterator = mListData.iterator();
+        while (infoIterator.hasNext()) {
+            TaskInfo info = (TaskInfo) infoIterator.next();
+            if (info != null) { //avoid header
+                String packageName = info.getPackageName();
+                if (info.isCheck() && !packageName.equals(mPackageName)) {
+                    ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                    am.killBackgroundProcesses(packageName);
+                    clearCount++;
+                    clearSize += info.getSize();
+                    infoIterator.remove();
+                }
+            }
+        }
+        if (clearCount > 0) {
+            UIUtils.showToast(this, "已清理了" + clearCount + "个进程, 共节省" + Formatter.formatFileSize(this, clearSize) + "内存");
+            mCount = mCount - clearCount;
+            tvTask.setText("进程：" + mCount+ "个");
+            mAvailMem = mAvailMem + clearSize;
+            tvRam.setText("内存：" + Formatter.formatFileSize(this, mAvailMem) + "/" + Formatter.formatFileSize(this, mTotalMem));
+            mListAdapter.notifyDataSetChanged();
         }
     }
 
