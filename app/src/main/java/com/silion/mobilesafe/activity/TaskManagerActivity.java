@@ -3,6 +3,8 @@ package com.silion.mobilesafe.activity;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -87,6 +89,8 @@ public class TaskManagerActivity extends Activity {
     private long mTotalMem;
     private int mCount;
     private long mAvailMem;
+    private SharedPreferences mPref;
+    private boolean mShowSys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,14 +100,21 @@ public class TaskManagerActivity extends Activity {
         tvRam = (TextView) findViewById(R.id.tvRam);
         tvHeader = (TextView) findViewById(R.id.tvHeader);
         pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
-        initFreeSpace();
         mListView = (ListView) findViewById(R.id.listView);
         mListAdapter = new ListAdapter(this);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(mScrollListener);
         mListView.setOnItemClickListener(mItemListener);
-        initData();
         mPackageName = getPackageName();
+        mPref = getSharedPreferences("setting", MODE_PRIVATE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mShowSys = mPref.getBoolean("show_sys", false);
+        initFreeSpace();
+        initData();
     }
 
     public void initFreeSpace() {
@@ -121,6 +132,9 @@ public class TaskManagerActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                mListData.clear();
+                mUserList.clear();
+                mSysList.clear();
                 List<TaskInfo> taskInfos;
                 taskInfos = TaskManager.getTaskList(TaskManagerActivity.this);
                 if (taskInfos != null && taskInfos.size() > 0) {
@@ -132,10 +146,12 @@ public class TaskManagerActivity extends Activity {
                         }
                     }
                     mListData.addAll(mUserList);
-                    mListData.add(null);
-                    mListData.addAll(mSysList);
-                    mHandler.sendEmptyMessage(0);
+                    if (mShowSys) {
+                        mListData.add(null);
+                        mListData.addAll(mSysList);
+                    }
                 }
+                mHandler.sendEmptyMessage(0);
             }
         }).start();
     }
@@ -178,11 +194,16 @@ public class TaskManagerActivity extends Activity {
         if (clearCount > 0) {
             UIUtils.showToast(this, "已清理了" + clearCount + "个进程, 共节省" + Formatter.formatFileSize(this, clearSize) + "内存");
             mCount = mCount - clearCount;
-            tvTask.setText("进程：" + mCount+ "个");
+            tvTask.setText("进程：" + mCount + "个");
             mAvailMem = mAvailMem + clearSize;
             tvRam.setText("内存：" + Formatter.formatFileSize(this, mAvailMem) + "/" + Formatter.formatFileSize(this, mTotalMem));
             mListAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void setting(View view) {
+        Intent intent = new Intent(this, SettingActivity.class);
+        startActivity(intent);
     }
 
     public class ListAdapter extends BaseAdapter {

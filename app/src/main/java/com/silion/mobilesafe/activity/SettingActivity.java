@@ -11,6 +11,7 @@ import android.view.View;
 import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.service.AddressService;
 import com.silion.mobilesafe.service.BlackService;
+import com.silion.mobilesafe.service.KillProcessService;
 import com.silion.mobilesafe.utils.SystemInfoUtils;
 import com.silion.mobilesafe.view.SettingItemView;
 
@@ -94,6 +95,50 @@ public class SettingActivity extends Activity {
             }
         }
     };
+    private SettingItemView mShowSysSettingItemView;
+    private View.OnClickListener mShowSysListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mShowSysSettingItemView.isCheck()) {
+                mShowSysSettingItemView.setChecked(false);
+                mPref.edit().putBoolean("show_sys", false).commit();
+            } else {
+                mShowSysSettingItemView.setChecked(true);
+                mPref.edit().putBoolean("show_sys", true).apply();
+            }
+        }
+    };
+    private SettingItemView mClearOnTimeSettingItemView;
+    String[] mTime = new String[]{"定时清理已关闭", "锁屏时清理", "每小时清理", "每2小时清理"};
+    private View.OnClickListener mSetTimeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            int checkedItem = mPref.getInt("clear_time", 0);
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+            builder.setTitle("请选择定时清理时间");
+//            builder.setSingleChoiceItems(mTime, checkedItem, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    mPref.edit().putInt("clear_time", which).commit();
+//                }
+//            });
+            builder.setItems(mTime, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPref.edit().putInt("clear_time", which).commit();
+                    mClearOnTimeSettingItemView.setDesc(mTime[which]);
+                    if (which > 0) {
+                        Intent intent = new Intent(SettingActivity.this, KillProcessService.class);
+                        startService(intent);
+                    } else {
+                        Intent intent = new Intent(SettingActivity.this, KillProcessService.class);
+                        stopService(intent);
+                    }
+                }
+            });
+            builder.create().show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +174,18 @@ public class SettingActivity extends Activity {
             mBlackSettingItemView.setChecked(true);
         } else {
             mBlackSettingItemView.setChecked(false);
+        }
+
+        mShowSysSettingItemView = (SettingItemView) findViewById(R.id.showSysSettingItemView);
+        mShowSysSettingItemView.setOnClickListener(mShowSysListener);
+        mShowSysSettingItemView.setChecked(mPref.getBoolean("show_sys", false));
+
+        mClearOnTimeSettingItemView = (SettingItemView) findViewById(R.id.clearOnTimeSettingItemView);
+        mClearOnTimeSettingItemView.setOnClickListener(mSetTimeListener);
+        if (SystemInfoUtils.isServiceRunning(this, KillProcessService.class.getName())) {
+            mClearOnTimeSettingItemView.setDesc(mTime[mPref.getInt("clear_time", 1)]);
+        } else {
+            mClearOnTimeSettingItemView.setDesc(mTime[0]);
         }
     }
 }
