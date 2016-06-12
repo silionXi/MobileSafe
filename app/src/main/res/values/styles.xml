@@ -25,4 +25,9 @@
         <item name="android:textColor">@color/ta</item>
     </style>
 
+    <style name="widget_text">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textColor">@color/ta</item>
+    </style>
+
 </resources>
