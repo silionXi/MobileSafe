@@ -52,6 +52,11 @@ public class HomeActivity extends Activity {
                     startActivity(intent);
                     break;
                 }
+                case 5: {
+                    Intent intent = new Intent(HomeActivity.this, AntivirusActivity.class);
+                    startActivity(intent);
+                    break;
+                }
                 case 7: {
                     Intent intent = new Intent(HomeActivity.this, AdvToolsActivity.class);
                     startActivity(intent);

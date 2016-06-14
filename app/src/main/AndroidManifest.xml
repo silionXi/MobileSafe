@@ -46,6 +46,7 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activity.AppManagerActivity"/>
         <activity android:name=".activity.TaskManagerActivity"/>
+        <activity android:name=".activity.AntivirusActivity"/>
 
         <receiver
             android:name=".receiver.BootCompleteReceiver"

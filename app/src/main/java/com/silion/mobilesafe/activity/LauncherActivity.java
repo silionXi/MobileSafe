@@ -85,6 +85,7 @@ public class LauncherActivity extends Activity {
             }
         }
     };
+    private SharedPreferences mPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class LauncherActivity extends Activity {
 
         mProgressTextView = (TextView) findViewById(R.id.progressTextView);
 
+        mPref = getSharedPreferences("setting", MODE_PRIVATE);
         init();
 
         AlphaAnimation alpha = new AlphaAnimation(0.3f, 1);
@@ -132,15 +134,15 @@ public class LauncherActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                copyDB("address.db");
+                copyAddressDB();
+                copyAntivirusDB();
 
                 long startTime = System.currentTimeMillis();
                 Message msg = Message.obtain();
                 HttpURLConnection conn = null;
                 try {
                     //检查更新
-                    SharedPreferences sharedPre = getSharedPreferences("setting", MODE_PRIVATE);
-                    if (sharedPre.getBoolean("auto_update", true)) {
+                    if (mPref.getBoolean("auto_update", true)) {
                         URL checkVersionUrl = new URL(CHECK_VERSION_URL);
                         conn = (HttpURLConnection) checkVersionUrl.openConnection();
                         conn.setRequestMethod("GET");
@@ -197,6 +199,9 @@ public class LauncherActivity extends Activity {
 
     public void copyDB(String dbName) {
         File destFile = new File(getFilesDir(), dbName);
+        if (destFile.exists() && destFile.length() > 0) {
+            return;
+        }
         InputStream is = null;
         OutputStream os = null;
         try {
@@ -213,6 +218,15 @@ public class LauncherActivity extends Activity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void copyAddressDB() {
+        copyDB("address.db");
+    }
+
+    private void copyAntivirusDB() {
+        copyDB("antivirus.db");
+        mPref.edit().putInt("antivirus_version", 1).apply();
     }
 
     public void showUpdateDialog() {
