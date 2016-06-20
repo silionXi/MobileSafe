@@ -69,6 +69,8 @@ public class AdvToolsActivity extends Activity {
     }
 
     public void appLock(View view) {
+        Intent intent = new Intent(this, AppLockActivity.class);
+        startActivity(intent);
     }
 
     public void quickDial(View view) {
