@@ -69,7 +69,7 @@ public class AdvToolsActivity extends Activity {
     }
 
     public void appLock(View view) {
-        Intent intent = new Intent(this, AppLockActivity.class);
+        Intent intent = new Intent(this, EnterPwActivity.class);
         startActivity(intent);
     }
 

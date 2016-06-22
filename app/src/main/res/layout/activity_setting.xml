@@ -70,5 +70,14 @@
             android:layout_height="wrap_content"
             silion:icon="1"
             silion:titleText="定时清理进程"/>
+
+        <com.silion.mobilesafe.view.SettingItemView
+            android:id="@+id/appLockSettingItemView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            silion:descOffText="程序锁已关闭"
+            silion:descOnText="程序锁已打开"
+            silion:icon="0"
+            silion:titleText="程序锁"/>
     </LinearLayout>
 </ScrollView>

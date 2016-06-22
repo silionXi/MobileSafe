@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,10 @@ import java.util.List;
  */
 public class AppLockDao {
     private AppLockOpenHelper mAppLockOpenHelper;
+    private Context mContext;
 
     public AppLockDao(Context context) {
+        mContext = context;
         mAppLockOpenHelper = new AppLockOpenHelper(context, "applock", 1);
     }
 
@@ -24,12 +27,14 @@ public class AppLockDao {
         values.put("packageName", packageName);
         db.insert("locked", null, values);
         db.close();
+        mContext.getContentResolver().notifyChange(Uri.parse("content://com.silion.mobilesafe/applock"), null);
     }
 
     public void delete(String packageName) {
         SQLiteDatabase db = mAppLockOpenHelper.getWritableDatabase();
         db.delete("locked", "packageName = ?", new String[]{packageName});
         db.close();
+        mContext.getContentResolver().notifyChange(Uri.parse("content://com.silion.mobilesafe/applock"), null);
     }
 
     public List<String> query() {

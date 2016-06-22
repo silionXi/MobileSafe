@@ -12,6 +12,7 @@ import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.service.AddressService;
 import com.silion.mobilesafe.service.BlackService;
 import com.silion.mobilesafe.service.KillProcessService;
+import com.silion.mobilesafe.service.WatchDogService;
 import com.silion.mobilesafe.utils.SystemInfoUtils;
 import com.silion.mobilesafe.view.SettingItemView;
 
@@ -139,6 +140,23 @@ public class SettingActivity extends Activity {
             builder.create().show();
         }
     };
+    private SettingItemView mAppLockSettingItemView;
+    private View.OnClickListener mAppLockListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mAppLockSettingItemView.isCheck()) {
+                mAppLockSettingItemView.setChecked(false);
+                Intent intent = new Intent();
+                intent.setClass(SettingActivity.this, WatchDogService.class);
+                stopService(intent);
+            } else {
+                mAppLockSettingItemView.setChecked(true);
+                Intent intent = new Intent();
+                intent.setClass(SettingActivity.this, WatchDogService.class);
+                startService(intent);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +204,14 @@ public class SettingActivity extends Activity {
             mClearOnTimeSettingItemView.setDesc(mTime[mPref.getInt("clear_time", 1)]);
         } else {
             mClearOnTimeSettingItemView.setDesc(mTime[0]);
+        }
+
+        mAppLockSettingItemView = (SettingItemView) findViewById(R.id.appLockSettingItemView);
+        mAppLockSettingItemView.setOnClickListener(mAppLockListener);
+        if (SystemInfoUtils.isServiceRunning(this, WatchDogService.class.getName())) {
+            mAppLockSettingItemView.setChecked(true);
+        } else {
+            mAppLockSettingItemView.setChecked(false);
         }
     }
 }
