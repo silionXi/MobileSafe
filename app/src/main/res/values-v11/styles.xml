@@ -6,4 +6,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="MyProgressBar" parent="android:Widget.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/progress_medium_white</item>
+    </style>
+
+    <style name="MyProgressBar.Horizontal" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal</item>
+    </style>
 </resources>
