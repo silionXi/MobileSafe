@@ -28,10 +28,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.silion.mobilesafe.R;
 import com.silion.mobilesafe.bean.AppInfo;
 import com.silion.mobilesafe.engine.AppManager;
+import com.silion.mobilesafe.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -117,6 +119,15 @@ public class AppManagerActivity extends Activity {
                     startActivity(intent);
                     break;
                 }
+                case R.id.llBackup: {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String dst = Environment.getExternalStorageDirectory() + "/" + AppManagerActivity.this.getPackageName() + "/" + mClickAppInfo.getName();
+                            FileUtils.backup(mClickAppInfo, dst);
+                        }
+                    }).start();
+                }
                 default:
                     break;
             }
@@ -136,6 +147,8 @@ public class AppManagerActivity extends Activity {
                 llShare.setOnClickListener(mPopListener);
                 LinearLayout llDetail = (LinearLayout) popupView.findViewById(R.id.llDetail);
                 llDetail.setOnClickListener(mPopListener);
+                LinearLayout llBackup = (LinearLayout) popupView.findViewById(R.id.llBackup);
+                llBackup.setOnClickListener(mPopListener);
 
                 popupWindowDismiss();
                 mPopupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);

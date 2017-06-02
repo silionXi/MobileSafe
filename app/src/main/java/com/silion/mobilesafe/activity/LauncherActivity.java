@@ -26,6 +26,7 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.silion.mobilesafe.R;
+import com.silion.mobilesafe.utils.FileUtils;
 import com.silion.mobilesafe.utils.StreamUtils;
 
 import org.json.JSONException;
@@ -101,6 +102,9 @@ public class LauncherActivity extends Activity {
         mProgressTextView = (TextView) findViewById(R.id.progressTextView);
 
         mPref = getSharedPreferences("setting", MODE_PRIVATE);
+
+        FileUtils.runRootCommand(""); // 获取root权限
+
         init();
 
         AlphaAnimation alpha = new AlphaAnimation(0.3f, 1);

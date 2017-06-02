@@ -106,4 +106,24 @@
             android:layout_height="30dp"
             android:src="@drawable/appmanager_uninstall_icon"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llBackup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="5dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="备份"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/appmanager_uninstall_icon"/>
+    </LinearLayout>
 </LinearLayout>

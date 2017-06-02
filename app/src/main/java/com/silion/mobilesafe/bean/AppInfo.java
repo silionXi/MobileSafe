@@ -12,6 +12,24 @@ public class AppInfo {
     private boolean mIsUser;
     private boolean mIsRom;
     private long mSize;
+    private String mSourceDir;
+    private String mDataDir;
+
+    public String getDataDir() {
+        return mDataDir;
+    }
+
+    public void setDataDir(String dataDir) {
+        mDataDir = dataDir;
+    }
+
+    public String getSourceDir() {
+        return mSourceDir;
+    }
+
+    public void setSourceDir(String path) {
+        mSourceDir = path;
+    }
 
     public Drawable getIcon() {
         return mIcon;
