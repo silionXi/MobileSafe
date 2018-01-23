@@ -20,6 +20,11 @@ public class FileUtils {
         Process process = null;
         DataOutputStream os = null;
         try {
+            /**
+             * su是root用户
+             * 其他用户是
+             * process = Runtime.getRuntime().exec("sh");
+             */
             process = Runtime.getRuntime().exec("su");
             os = new DataOutputStream(process.getOutputStream());
             os.writeBytes(command + "\n");
